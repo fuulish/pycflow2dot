@@ -408,6 +408,19 @@ def _annotate_nodes_with_filename(g, graph, c_fname):
         dg['file_name'] = c_fname
 
 
+def _mark_call_paths(graph, source, target):
+    if source is None or target is None:
+        return
+    source_node = rename_if_reserved_by_dot(source)
+    target_node = rename_if_reserved_by_dot(target)
+    assert source_node in graph, source_node
+    assert target_node in graph, target_node
+    for path in nx.all_simple_paths(
+            graph, source_node, target_node):
+        for u, v in zip(path[:-1], path[1:]):
+            graph.edges[u, v]['style'] = '"dashed"'
+
+
 def _format_merged_graph(graph, for_latex):
     """Return graph with `dot` labeling."""
     g = nx.DiGraph()
@@ -418,8 +431,8 @@ def _format_merged_graph(graph, for_latex):
     for u, d in graph.nodes(data=True):
         _format_merged_node(
             u, d, g, for_latex, shape, colormap)
-    for u, v in graph.edges():
-        g.add_edge(u, v)
+    for u, v, d in graph.edges(data=True):
+        g.add_edge(u, v, **d)
     return g
 
 
@@ -566,6 +579,14 @@ def parse_args():
     parser.add_argument('--merge', default=False, action='store_true',
                         help='create a single graph for multiple C files.')
     parser.add_argument(
+        '--source', action='store',
+        help=('start node for call path highlighting. '
+            'Available only with option `--merge`.'))
+    parser.add_argument(
+        '--target', action='store',
+        help=('end node for call path highlighting'
+            'Available only with option `--merge`.'))
+    parser.add_argument(
         '-g', '--layout', default='dot',
         choices=['dot', 'neato', 'twopi', 'circo', 'fdp', 'sfdp'],
         help='graphviz layout algorithm.')
@@ -616,6 +637,8 @@ def main():
     preproc = args.preprocess
     do_rev = args.reverse
     merge = args.merge
+    source = args.source
+    target = args.target
     layout = args.layout
     rankdir = args.rankdir
     exclude_list_fname = args.exclude
@@ -650,6 +673,7 @@ def main():
     rm_excluded_funcs(exclude_list_fname, graphs)
     if merge:
         g = _merge_graphs(graphs, c_fnames)
+        _mark_call_paths(g, source, target)
         g = _format_merged_graph(g, for_latex)
         dot_path = _dump_graph_to_dot(g, img_fname, layout, rankdir)
         dot_paths = [dot_path]
