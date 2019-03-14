@@ -144,7 +144,7 @@ def rename_if_reserved_by_dot(word):
     return word
 
 
-def dot_preamble(c_fname, for_latex):
+def dot_preamble(c_fname, for_latex, rankdir):
     c_fname = _graph_name_for_latex(c_fname, for_latex)
     d = _graph_node_defaults()
     node_defaults = ', '.join(
@@ -152,10 +152,11 @@ def dot_preamble(c_fname, for_latex):
     dot_str = (
         'digraph G {{\n'
         'node [{node_defaults}];\n'
-        'rankdir=LR;\n'
+        'rankdir={rankdir};\n'
         'label="{c_fname}"\n'
         ).format(
             node_defaults=node_defaults,
+            rankdir=rankdir,
             c_fname=c_fname)
     return dot_str
 
@@ -256,8 +257,10 @@ def node_defined_in_other_src(node, other_graphs):
     return defined_somewhere
 
 
-def dump_dot_wo_pydot(graph, other_graphs, c_fname, for_latex, multi_page):
-    dot_str = dot_preamble(c_fname, for_latex)
+def dump_dot_wo_pydot(
+        graph, other_graphs, c_fname,
+        for_latex, multi_page, rankdir):
+    dot_str = dot_preamble(c_fname, for_latex, rankdir)
     # format nodes
     for node in graph:
         node_dict = graph.nodes[node]
@@ -318,32 +321,35 @@ def _annotate_graph(
 
 
 def write_graph2dot(graph, other_graphs, c_fname, img_fname,
-                    for_latex, multi_page, layout):
+                    for_latex, multi_page, layout, rankdir):
     if pydot is None:
         print('Pydot not found. Exporting using pycflow2dot.write_dot_file().')
         dot_str = dump_dot_wo_pydot(
             graph, other_graphs, c_fname,
-            for_latex=for_latex, multi_page=multi_page)
+            for_latex=for_latex, multi_page=multi_page,
+            rankdir=rankdir)
         dot_path = write_dot_file(dot_str, img_fname)
     else:
         # dump using networkx and pydot
         g = _annotate_graph(
             graph, other_graphs, c_fname, for_latex, multi_page)
-        dot_path = _dump_graph_to_dot(g, img_fname, layout)
+        dot_path = _dump_graph_to_dot(g, img_fname, layout, rankdir)
     return dot_path
 
 
-def _set_pydot_layout(pydot_graph, layout):
+def _set_pydot_layout(pydot_graph, layout, rankdir):
     pydot_graph.set_splines('true')
     if layout == 'twopi':
         pydot_graph.set_ranksep(5)
         pydot_graph.set_root('main')
     else:
         pydot_graph.set_overlap(False)
-        pydot_graph.set_rankdir('LR')
+        pydot_graph.set_rankdir(rankdir)
 
 
-def write_graphs2dot(graphs, c_fnames, img_fname, for_latex, multi_page, layout):
+def write_graphs2dot(
+        graphs, c_fnames, img_fname,
+        for_latex, multi_page, layout, rankdir):
     dot_paths = list()
     for counter, (graph, c_fname) in enumerate(zip(graphs, c_fnames)):
         other_graphs = list(graphs)
@@ -351,7 +357,7 @@ def write_graphs2dot(graphs, c_fnames, img_fname, for_latex, multi_page, layout)
         cur_img_fname = img_fname + str(counter)
         dot_path = write_graph2dot(
             graph, other_graphs, c_fname, cur_img_fname,
-            for_latex, multi_page, layout)
+            for_latex, multi_page, layout, rankdir)
         dot_paths.append(dot_path)
     return dot_paths
 
@@ -449,10 +455,10 @@ def _format_merged_node(u, d, g, for_latex, shape, colormap):
     g.add_node(u, **attr)
 
 
-def _dump_graph_to_dot(graph, img_fname, layout):
+def _dump_graph_to_dot(graph, img_fname, layout, rankdir):
     """Dump `graph` to `dot` file with base `img_fname`."""
     pydot_graph = nx.drawing.nx_pydot.to_pydot(graph)
-    _set_pydot_layout(pydot_graph, layout)
+    _set_pydot_layout(pydot_graph, layout, rankdir)
     dot_path = img_fname + '.dot'
     pydot_graph.write(dot_path, format='dot')
     return dot_path
@@ -548,6 +554,10 @@ def parse_args():
         choices=['dot', 'neato', 'twopi', 'circo', 'fdp', 'sfdp'],
         help='graphviz layout algorithm.')
     parser.add_argument(
+        '--rankdir', default='LR',
+        choices=['TB', 'LR', 'BT', 'RL'],
+        help='graph layout direction given to `dot`.')
+    parser.add_argument(
         '-x', '--exclude', default='',
         help='file listing functions to ignore')
     parser.add_argument(
@@ -591,6 +601,7 @@ def main():
     do_rev = args.reverse
     merge = args.merge
     layout = args.layout
+    rankdir = args.rankdir
     exclude_list_fname = args.exclude
     # configure the logger
     logger.addHandler(logging.StreamHandler())
@@ -624,12 +635,12 @@ def main():
     if merge:
         g = _merge_graphs(graphs, c_fnames)
         g = _format_merged_graph(g, for_latex)
-        dot_path = _dump_graph_to_dot(g, img_fname, layout)
+        dot_path = _dump_graph_to_dot(g, img_fname, layout, rankdir)
         dot_paths = [dot_path]
     else:
         dot_paths = write_graphs2dot(
             graphs, c_fnames, img_fname, for_latex,
-            multi_page, layout)
+            multi_page, layout, rankdir)
     dot2img(dot_paths, img_format, layout)
 
 
