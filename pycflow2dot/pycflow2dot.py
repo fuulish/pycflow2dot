@@ -342,15 +342,13 @@ def write_graph2dot(graph, other_graphs, c_fname, img_fname,
 
 def write_graphs2dot(graphs, c_fnames, img_fname, for_latex, multi_page, layout):
     dot_paths = list()
-    counter = 0
-    for graph, c_fname in zip(graphs, c_fnames):
+    for counter, (graph, c_fname) in enumerate(zip(graphs, c_fnames)):
         other_graphs = list(graphs)
         other_graphs.remove(graph)
         cur_img_fname = img_fname + str(counter)
         dot_path = write_graph2dot(graph, other_graphs, c_fname, cur_img_fname,
             for_latex, multi_page, layout)
         dot_paths.append(dot_path)
-        counter += 1
     return dot_paths
 
 
