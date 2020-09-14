@@ -160,7 +160,7 @@ def cflow2nx(cflow_str, c_fname):
 
         # get source line #
         src_line_no = re.findall(':.*>', line)
-        if src_line_no != []:
+        if src_line_no:
             src_line_no = int(src_line_no[0][1:-1])
         else:
             src_line_no = -1
