@@ -198,17 +198,36 @@ def rename_if_reserved_by_dot(word):
 
 
 def dot_preamble(c_fname, for_latex):
-    if for_latex:
-        c_fname = re.sub(r'_', r'\\\\_', c_fname)
+    c_fname = _graph_name_for_latex(c_fname, for_latex)
+    d = _graph_node_defaults()
+    node_defaults = ', '.join(
+        '{k}={v}'.format(k=k, v=v) for k, v in d.items())
     dot_str = (
         'digraph G {{\n'
-        'node [peripheries=2 style="filled,rounded" '
-        'fontname="Vera Sans Mono" color="#eecc80"];\n'
+        'node [{node_defaults}];\n'
         'rankdir=LR;\n'
         'label="{c_fname}"\n'
         'main [shape=box];\n').format(
+            node_defaults=node_defaults,
             c_fname=c_fname)
     return dot_str
+
+
+def _graph_name_for_latex(c_fname, for_latex):
+    """Return graph name, with escaped underscores.
+
+    Escape the underscores if `for_latex is True`.
+    """
+    if for_latex:
+        c_fname = re.sub(r'_', r'\\\\_', c_fname)
+    return c_fname
+
+
+def _graph_node_defaults():
+    """Return default properties of nodes."""
+    return dict(
+        peripheries="2", style='"filled,rounded"',
+        fontname='"Vera Sans Mono"', color='"#eecc80"')
 
 
 def choose_node_format(node, nest_level, src_line, defined_somewhere,
@@ -319,6 +338,35 @@ def write_dot_file(dot_str, dot_fname):
     return dot_path
 
 
+def _annotate_graph(
+        graph, other_graphs, c_fname,
+        for_latex, multi_page):
+    """Return graph with labels, color, styles.
+
+    @rtype: `networkx.DiGraph`
+    """
+    g = nx.DiGraph()
+    graph_label = _graph_name_for_latex(c_fname, for_latex)
+    g.graph['graph'] = dict(label=graph_label)
+    g.graph['node'] = _graph_node_defaults()
+    # annotate nodes
+    for node in graph:
+        defined_somewhere = node_defined_in_other_src(node, other_graphs)
+        node_dict = graph.nodes[node]
+        nest_level = node_dict['nest_level']
+        src_line = node_dict['src_line']
+        label, color, shape = choose_node_format(
+            node, nest_level, src_line,
+            defined_somewhere,
+            for_latex, multi_page)
+        g.add_node(
+            node, label=label, color=color, shape=shape)
+    # annotate edges
+    for u, v in graph.edges():
+        g.add_edge(u, v)
+    return g
+
+
 def write_graph2dot(graph, other_graphs, c_fname, img_fname,
                     for_latex, multi_page, layout):
     if pydot is None:
@@ -329,7 +377,9 @@ def write_graph2dot(graph, other_graphs, c_fname, img_fname,
         dot_path = write_dot_file(dot_str, img_fname)
     else:
         # dump using networkx and pydot
-        pydot_graph = nx.drawing.nx_pydot.to_pydot(graph)
+        g = _annotate_graph(
+            graph, other_graphs, c_fname, for_latex, multi_page)
+        pydot_graph = nx.drawing.nx_pydot.to_pydot(g)
         pydot_graph.set_splines('true')
         if layout == 'twopi':
             pydot_graph.set_ranksep(5)
