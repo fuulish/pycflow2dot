@@ -57,10 +57,10 @@ Python 3 or 2:
 You also need to install the following non-Python dependencies:
 
 - [GNU cflow](http://en.wikipedia.org/wiki/GNU_cflow):
-  - `apt-get install cflow` on Debian GNU/Linux
+  - `apt install cflow` on Debian GNU/Linux
   - `port install cflow` with [MacPorts](http://www.macports.org/)
 - [`dot`](http://www.graphviz.org/):
-  - `apt-get install graphviz`
+  - `apt install graphviz`
   - `port install graphviz`
 
 Optionally, [`cpp`](http://en.wikipedia.org/wiki/C_preprocessor) too.
