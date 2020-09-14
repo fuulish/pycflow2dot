@@ -219,7 +219,6 @@ def is_reserved_by_dot(word):
 def dot_preamble(c_fname, for_latex):
     if for_latex:
         c_fname = re.sub(r'_', r'\\\\_', c_fname)
-
     dot_str = (
         'digraph G {{\n'
         'node [peripheries=2 style="filled,rounded" '
@@ -278,7 +277,7 @@ def choose_node_format(node, nest_level, src_line, defined_somewhere,
 
 def dot_format_node(node, nest_level, src_line, defined_somewhere,
                     for_latex, multi_page):
-    (label, color, shape) = choose_node_format(node, nest_level, src_line,
+    label, color, shape = choose_node_format(node, nest_level, src_line,
                                                defined_somewhere,
                                                for_latex, multi_page)
     dot_str = (
@@ -524,7 +523,7 @@ def main():
     print(copyright_msg)
 
     # input
-    (cflow, dot) = check_cflow_dot_availability()
+    cflow, dot = check_cflow_dot_availability()
 
     args = parse_args()
 
