@@ -301,7 +301,7 @@ def node_defined_in_other_src(node, other_graphs):
 
     for graph in other_graphs:
         if node in graph:
-            src_line = graph.node[node]['src_line']
+            src_line = graph.nodes[node]['src_line']
 
             if src_line != -1:
                 defined_somewhere = True
@@ -313,7 +313,7 @@ def dump_dot_wo_pydot(graph, other_graphs, c_fname, for_latex, multi_page):
     dot_str = dot_preamble(c_fname, for_latex)
 
     for node in graph:
-        node_dict = graph.node[node]
+        node_dict = graph.nodes[node]
 
         defined_somewhere = node_defined_in_other_src(node, other_graphs)
 
