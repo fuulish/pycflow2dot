@@ -68,15 +68,15 @@ def call_cflow(
         do_reverse=False):
     cflow_cmd = [cflow]
     if numbered_nesting:
-        cflow_cmd += ['-l']
+        cflow_cmd.append('-l')
     # None when -p passed w/o value
     if preprocess is None:
-        cflow_cmd += ['--cpp']
+        cflow_cmd.append('--cpp')
     elif preprocess:
-        cflow_cmd += ['--cpp=' + preprocess]
+        cflow_cmd.append('--cpp=' + preprocess)
     if do_reverse:
-        cflow_cmd += ['--reverse']
-    cflow_cmd += [c_fname]
+        cflow_cmd.append('--reverse')
+    cflow_cmd.append(c_fname)
     logger.debug('cflow command:\n\t' + str(cflow_cmd))
     cflow_data = subprocess.check_output(cflow_cmd)
     cflow_data = bytes2str(cflow_data)
@@ -347,8 +347,9 @@ def write_graphs2dot(graphs, c_fnames, img_fname, for_latex, multi_page, layout)
         other_graphs = list(graphs)
         other_graphs.remove(graph)
         cur_img_fname = img_fname + str(counter)
-        dot_paths += [write_graph2dot(graph, other_graphs, c_fname, cur_img_fname,
-                                      for_latex, multi_page, layout)]
+        dot_path = write_graph2dot(graph, other_graphs, c_fname, cur_img_fname,
+            for_latex, multi_page, layout)
+        dot_paths.append(dot_path)
         counter += 1
     return dot_paths
 
@@ -365,7 +366,7 @@ def check_cflow_dot_availability():
             path = path.replace('\n', '')
             print('found {dependency} at: {path}'.format(
                 dependency=dependency, path=path))
-            dep_paths += [path]
+            dep_paths.append(path)
     return dep_paths
 
 
@@ -502,12 +503,12 @@ def main():
     for c_fname in c_fnames:
         cur_str = call_cflow(c_fname, cflow, numbered_nesting=True,
                              preprocess=preproc, do_reverse=do_rev)
-        cflow_strs += [cur_str]
+        cflow_strs.append(cur_str)
     # parse `cflow` output
     graphs = list()
     for cflow_out, c_fname in zip(cflow_strs, c_fnames):
         cur_graph = cflow2nx(cflow_out, c_fname)
-        graphs += [cur_graph]
+        graphs.append(cur_graph)
     rm_excluded_funcs(exclude_list_fname, graphs)
     dot_paths = write_graphs2dot(graphs, c_fnames, img_fname, for_latex,
                                  multi_page, layout)
