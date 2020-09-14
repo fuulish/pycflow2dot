@@ -158,9 +158,13 @@ def cflow2nx(cflow_str, c_fname):
         (nest_level, func_name) = re.split(r'\t', s)
         nest_level = int(nest_level)
         cur_node = rename_if_reserved_by_dot(func_name)
-        logger.debug('Found function:\n\t' + func_name
-               + ',\n at depth:\n\t' + str(nest_level)
-               + ',\n at src line:\n\t' + str(src_line_no))
+        logger.debug((
+            'Found function:\n\t{func_name}'
+            ',\n at depth:\n\t{nest_level}'
+            ',\n at src line:\n\t{src_line_no}').format(
+                func_name=func_name,
+                nest_level=nest_level,
+                src_line_no=src_line_no))
         stack[nest_level] = cur_node
         # not already seen ?
         if cur_node not in g:
@@ -179,7 +183,9 @@ def cflow2nx(cflow_str, c_fname):
                 continue
             # add new edge
             g.add_edge(pred_node, cur_node)
-            logger.info('Found edge:\n\t' + pred_node + '--->' + cur_node)
+            logger.info(
+                'Found edge:\n\t{pred_node}--->{cur_node}'.format(
+                    pred_node=pred_node, cur_node=cur_node))
     return g
 
 
@@ -357,7 +363,8 @@ def check_cflow_dot_availability():
             raise Exception(dependency + ' not found in $PATH.')
         else:
             path = path.replace('\n', '')
-            print('found ' + dependency + ' at: ' + path)
+            print('found {dependency} at: {path}'.format(
+                dependency=dependency, path=path))
             dep_paths += [path]
     return dep_paths
 
