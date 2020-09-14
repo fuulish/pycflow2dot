@@ -360,11 +360,10 @@ def check_cflow_dot_availability():
         path = bytes2str(path)
         if path.find(dependency) < 0:
             raise Exception(dependency + ' not found in $PATH.')
-        else:
-            path = path.replace('\n', '')
-            print('found {dependency} at: {path}'.format(
-                dependency=dependency, path=path))
-            dep_paths.append(path)
+        path = path.replace('\n', '')
+        print('found {dependency} at: {path}'.format(
+            dependency=dependency, path=path))
+        dep_paths.append(path)
     return dep_paths
 
 
