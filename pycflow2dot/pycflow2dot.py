@@ -430,12 +430,10 @@ def parse_args():
     parser.add_argument(
         '-g', '--layout', default='dot',
         choices=['dot', 'neato', 'twopi', 'circo', 'fdp', 'sfdp'],
-        help='graphviz layout algorithm.'
-    )
+        help='graphviz layout algorithm.')
     parser.add_argument(
         '-x', '--exclude', default='',
-        help='file listing functions to ignore'
-    )
+        help='file listing functions to ignore')
     parser.add_argument(
         '-v', '--verbosity', default='ERROR',
         choices=['ERROR', 'WARNING', 'INFO', 'DEBUG'],
