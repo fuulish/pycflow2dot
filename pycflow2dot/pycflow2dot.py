@@ -252,9 +252,10 @@ def choose_node_format(node, nest_level, src_line, defined_somewhere,
 
 def dot_format_node(node, nest_level, src_line, defined_somewhere,
                     for_latex, multi_page):
-    label, color, shape = choose_node_format(node, nest_level, src_line,
-                                               defined_somewhere,
-                                               for_latex, multi_page)
+    label, color, shape = choose_node_format(
+        node, nest_level, src_line,
+        defined_somewhere,
+        for_latex, multi_page)
     dot_str = (
         '{node}[label="{label}" '
         'color="{color}" shape={shape}];\n\n').format(
@@ -294,8 +295,9 @@ def dump_dot_wo_pydot(graph, other_graphs, c_fname, for_latex, multi_page):
         defined_somewhere = node_defined_in_other_src(node, other_graphs)
         nest_level = node_dict['nest_level']
         src_line = node_dict['src_line']
-        dot_str += dot_format_node(node, nest_level, src_line, defined_somewhere,
-                                   for_latex, multi_page)
+        dot_str += dot_format_node(
+            node, nest_level, src_line, defined_somewhere,
+            for_latex, multi_page)
     # format edges
     for from_node, to_node in graph.edges():
         # call order affects edge color, so use only black
@@ -321,8 +323,9 @@ def write_graph2dot(graph, other_graphs, c_fname, img_fname,
                     for_latex, multi_page, layout):
     if pydot is None:
         print('Pydot not found. Exporting using pycflow2dot.write_dot_file().')
-        dot_str = dump_dot_wo_pydot(graph, other_graphs, c_fname,
-                                    for_latex=for_latex, multi_page=multi_page)
+        dot_str = dump_dot_wo_pydot(
+            graph, other_graphs, c_fname,
+            for_latex=for_latex, multi_page=multi_page)
         dot_path = write_dot_file(dot_str, img_fname)
     else:
         # dump using networkx and pydot
@@ -346,7 +349,8 @@ def write_graphs2dot(graphs, c_fnames, img_fname, for_latex, multi_page, layout)
         other_graphs = list(graphs)
         other_graphs.remove(graph)
         cur_img_fname = img_fname + str(counter)
-        dot_path = write_graph2dot(graph, other_graphs, c_fname, cur_img_fname,
+        dot_path = write_graph2dot(
+            graph, other_graphs, c_fname, cur_img_fname,
             for_latex, multi_page, layout)
         dot_paths.append(dot_path)
     return dot_paths
@@ -498,8 +502,9 @@ def main():
             multi_page=multi_page))
     cflow_strs = list()
     for c_fname in c_fnames:
-        cur_str = call_cflow(c_fname, cflow, numbered_nesting=True,
-                             preprocess=preproc, do_reverse=do_rev)
+        cur_str = call_cflow(
+            c_fname, cflow, numbered_nesting=True,
+            preprocess=preproc, do_reverse=do_rev)
         cflow_strs.append(cur_str)
     # parse `cflow` output
     graphs = list()
@@ -507,8 +512,9 @@ def main():
         cur_graph = cflow2nx(cflow_out, c_fname)
         graphs.append(cur_graph)
     rm_excluded_funcs(exclude_list_fname, graphs)
-    dot_paths = write_graphs2dot(graphs, c_fnames, img_fname, for_latex,
-                                 multi_page, layout)
+    dot_paths = write_graphs2dot(
+        graphs, c_fnames, img_fname, for_latex,
+        multi_page, layout)
     dot2img(dot_paths, img_format, layout)
 
 
