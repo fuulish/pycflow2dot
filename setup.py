@@ -34,7 +34,6 @@ def run_setup():
     setup(
         name='pycflow2dot',
         version='0.2.2',
-        py_modules=['pycflow2dot'],
         license='GPLv3',
         description=description,
         long_description=long_description,
@@ -43,6 +42,8 @@ def run_setup():
         author_email='jfilippidis@gmail.com',
         url=url,
         install_requires=install_requires,
+        packages=[name],
+        package_dir={name: name},
         entry_points={
             'console_scripts': ['cflow2dot = pycflow2dot:main']},
         classifiers=classifiers,
