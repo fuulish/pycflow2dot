@@ -31,6 +31,7 @@ except:
     pydot = None
 
 
+_DOT_RESERVED = {'graph', 'strict', 'digraph', 'subgraph', 'node', 'edge'}
 logger = logging.getLogger(__name__)
 
 
@@ -183,10 +184,9 @@ def cflow2nx(cflow_str, c_fname):
 
 
 def is_reserved_by_dot(word):
-    reserved = {'graph', 'strict', 'digraph', 'subgraph', 'node', 'edge'}
     # dot is case-insensitive, according to:
     #   http://www.graphviz.org/doc/info/lang.html
-    if word.lower() in reserved:
+    if word.lower() in _DOT_RESERVED:
         word = word + '_'
     return word
 
