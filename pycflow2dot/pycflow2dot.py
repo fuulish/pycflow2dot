@@ -19,6 +19,7 @@
 #
 import argparse
 import locale
+import logging
 import re
 import subprocess
 import sys
@@ -29,14 +30,8 @@ try:
 except:
     pydot = None
 
-debug_msg_verbosity = 0
 
-
-def dprint(verbosity, s):
-    """Debug mode printing."""
-    # TODO: make this a package
-    if verbosity < debug_msg_verbosity:
-        print(s)
+logger = logging.getLogger(__name__)
 
 
 def bytes2str(b):
@@ -83,11 +78,11 @@ def call_cflow(c_fname, cflow, numbered_nesting=True, preprocess=False,
 
     cflow_cmd += [c_fname]
 
-    dprint(2, 'cflow command:\n\t' + str(cflow_cmd))
+    logger.debug('cflow command:\n\t' + str(cflow_cmd))
 
     cflow_data = subprocess.check_output(cflow_cmd)
     cflow_data = bytes2str(cflow_data)
-    dprint(2, 'cflow returned:\n\n' + cflow_data)
+    logger.debug('cflow returned:\n\n' + cflow_data)
 
     return cflow_data
 
@@ -142,7 +137,7 @@ def cflow2dot_old(data, offset=False, filename=''):
                 raise Exception('bug ?')
     dot += '}\n'
 
-    dprint(2, 'dot dump str:\n\n' + dot)
+    logger.debug('dot dump str:\n\n' + dot)
     return dot
 
 
@@ -152,7 +147,7 @@ def cflow2nx(cflow_str, c_fname):
     g = nx.DiGraph()
     stack = dict()
     for line in lines:
-        #dprint(2, line)
+        # logger.debug(line)
 
         # empty line ?
         if line == '':
@@ -178,7 +173,7 @@ def cflow2nx(cflow_str, c_fname):
         nest_level = int(nest_level)
         cur_node = is_reserved_by_dot(func_name)
 
-        dprint(1, 'Found function:\n\t' + func_name
+        logger.debug('Found function:\n\t' + func_name
                + ',\n at depth:\n\t' + str(nest_level)
                + ',\n at src line:\n\t' + str(src_line_no))
 
@@ -187,7 +182,7 @@ def cflow2nx(cflow_str, c_fname):
         # not already seen ?
         if cur_node not in g:
             g.add_node(cur_node, nest_level=nest_level, src_line=src_line_no)
-            dprint(0, 'New Node: ' + cur_node)
+            logger.info('New Node: ' + cur_node)
 
         # not root node ?
         if nest_level != 0:
@@ -204,7 +199,7 @@ def cflow2nx(cflow_str, c_fname):
 
             # add new edge
             g.add_edge(pred_node, cur_node)
-            dprint(0, 'Found edge:\n\t' + pred_node + '--->' + cur_node)
+            logger.info('Found edge:\n\t' + pred_node + '--->' + cur_node)
 
     return g
 
@@ -252,7 +247,7 @@ def choose_node_format(node, nest_level, src_line, defined_somewhere,
         label = re.sub(r'_', r'\\\\_', node)
     else:
         label = node
-    dprint(1, 'Label:\n\t: ' + label)
+    logger.debug('Label:\n\t: ' + label)
 
     # src line of def here ?
     if src_line != -1:
@@ -271,7 +266,7 @@ def choose_node_format(node, nest_level, src_line, defined_somewhere,
             if defined_somewhere:
                 label = sl + 'descref[' + label + ']{' + node + '}'
 
-    dprint(1, 'Node dot label:\n\t: ' + label)
+    logger.debug('Node dot label:\n\t: ' + label)
 
     return (label, color, shape)
 
@@ -329,7 +324,7 @@ def dump_dot_wo_pydot(graph, other_graphs, c_fname, for_latex, multi_page):
         dot_str += dot_format_edge(from_node, to_node, color)
 
     dot_str += '}\n'
-    dprint(2, 'dot dump str:\n\n' + dot_str)
+    logger.debug('dot dump str:\n\n' + dot_str)
 
     return dot_str
 
@@ -339,7 +334,7 @@ def write_dot_file(dot_str, dot_fname):
         dot_path = dot_fname + '.dot'
         with open(dot_path, 'w') as fp:
             fp.write(dot_str)
-            dprint(0, 'Dumped dot file.')
+            logger.info('Dumped dot file.')
     except:
         raise Exception('Failed to save dot.')
 
@@ -411,7 +406,7 @@ def dot2img(dot_paths, img_format, layout):
         img_fname = img_fname.replace('.dot', '.' + img_format)
 
         dot_cmd = [layout, '-T' + img_format, '-o', img_fname, dot_path]
-        dprint(1, dot_cmd)
+        logger.debug(dot_cmd)
 
         subprocess.check_call(dot_cmd)
     print(img_format + ' produced successfully from dot.')
@@ -529,7 +524,8 @@ def main():
     layout = args.layout
     exclude_list_fname = args.exclude
 
-    dprint(0, 'C src files:\n\t' + str(c_fnames) + ", (extension '.c' omitted)\n"
+    logger.info(
+            'C src files:\n\t' + str(c_fnames) + ", (extension '.c' omitted)\n"
            + 'img fname:\n\t' + str(img_fname) + '.' + img_format + '\n'
            + 'LaTeX export from Inkscape:\n\t' + str(for_latex) + '\n'
            + 'Multi-page PDF:\n\t' + str(multi_page))
