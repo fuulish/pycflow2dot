@@ -93,7 +93,7 @@ def run_setup():
         packages=[name],
         package_dir={name: name},
         entry_points={
-            'console_scripts': ['cflow2dot = pycflow2dot:main']},
+            'console_scripts': ['cflow2dot = pycflow2dot.pycflow2dot:main']},
         classifiers=classifiers,
         keywords=keywords)
 
