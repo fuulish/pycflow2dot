@@ -45,3 +45,8 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# other
+*.pdf_tex
+*.aux
+*.log
