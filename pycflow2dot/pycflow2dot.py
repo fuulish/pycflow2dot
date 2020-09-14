@@ -91,12 +91,14 @@ def cflow2dot_old(data, offset=False, filename=''):
     color = ['#eecc80', '#ccee80', '#80ccee', '#eecc80', '#80eecc']
     shape = ['box', 'ellipse', 'octagon', 'hexagon', 'diamond']
 
-    dot = 'digraph G {\n'
-    dot += 'node [peripheries=2 style="filled,rounded" ' + \
-           'fontname="Vera Sans Mono" color="#eecc80"];\n'
-    dot += 'rankdir=LR;\n'
-    dot += 'label="' + filename + '"\n'
-    dot += 'main [shape=box];\n'
+    dot = (
+        'digraph G {{\n'
+        'node [peripheries=2 style="filled,rounded" '
+        'fontname="Vera Sans Mono" color="#eecc80"];\n'
+        'rankdir=LR;\n'
+        'label="{filename}"\n'
+        'main [shape=box];\n').format(
+            filename=filename)
 
     lines = data.replace('\r', '').split('\n')
 
@@ -218,13 +220,14 @@ def dot_preamble(c_fname, for_latex):
     if for_latex:
         c_fname = re.sub(r'_', r'\\\\_', c_fname)
 
-    dot_str = 'digraph G {\n'
-    dot_str += 'node [peripheries=2 style="filled,rounded" ' + \
+    dot_str = (
+        'digraph G {{\n'
+        'node [peripheries=2 style="filled,rounded" '
         'fontname="Vera Sans Mono" color="#eecc80"];\n'
-    dot_str += 'rankdir=LR;\n'
-    dot_str += 'label="' + c_fname + '"\n'
-    dot_str += 'main [shape=box];\n'
-
+        'rankdir=LR;\n'
+        'label="{c_fname}"\n'
+        'main [shape=box];\n').format(
+            c_fname=c_fname)
     return dot_str
 
 
@@ -252,9 +255,11 @@ def choose_node_format(node, nest_level, src_line, defined_somewhere,
     # src line of def here ?
     if src_line != -1:
         if for_latex:
-            label = label + '\\n' + str(src_line)
+            label = '{label}\\n{src_line}'.format(
+                label=label, src_line=src_line)
         else:
-            label = label + '\\n' + str(src_line)
+            label = '{label}\\n{src_line}'.format(
+                label=label, src_line=src_line)
 
     # multi-page pdf ?
     if multi_page:
@@ -276,18 +281,23 @@ def dot_format_node(node, nest_level, src_line, defined_somewhere,
     (label, color, shape) = choose_node_format(node, nest_level, src_line,
                                                defined_somewhere,
                                                for_latex, multi_page)
-    dot_str = node
-    dot_str += '[label="' + label + '" '
-    dot_str += 'color="' + color + '" '
-    dot_str += 'shape=' + shape + '];\n\n'
-
+    dot_str = (
+        '{node}[label="{label}" '
+        'color="{color}" shape={shape}];\n\n').format(
+            node=node,
+            label=label,
+            color=color,
+            shape=shape)
     return dot_str
 
 
 def dot_format_edge(from_node, to_node, color):
-    dot_str = 'edge [color="' + color + '"];\n\n'
-    dot_str += from_node + '->' + to_node + '\n'
-
+    dot_str = (
+        'edge [color="{color}"];\n\n'
+        '{from_node}->{to_node}\n').format(
+            color=color,
+            from_node=from_node,
+            to_node=to_node)
     return dot_str
 
 
@@ -530,13 +540,16 @@ def main():
     # configure the logger
     logger.addHandler(logging.StreamHandler())
     logger.setLevel(args.verbosity)
-
-    logger.info(
-            'C src files:\n\t' + str(c_fnames) + ", (extension '.c' omitted)\n"
-           + 'img fname:\n\t' + str(img_fname) + '.' + img_format + '\n'
-           + 'LaTeX export from Inkscape:\n\t' + str(for_latex) + '\n'
-           + 'Multi-page PDF:\n\t' + str(multi_page))
-
+    logger.info((
+        'C source files:\n\t{c_fnames},\n'
+        'img fname:\n\t{img_fname}.{img_format}\n'
+        'LaTeX export from Inkscape:\n\t{for_latex}\n'
+        'Multi-page PDF:\n\t{multi_page}').format(
+            c_fnames=c_fnames,
+            img_fname=img_fname,
+            img_format=img_format,
+            for_latex=for_latex,
+            multi_page=multi_page))
     cflow_strs = []
     for c_fname in c_fnames:
         cur_str = call_cflow(c_fname, cflow, numbered_nesting=True,
