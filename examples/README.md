@@ -1,6 +1,7 @@
-An example is in the directory `simple/`. To run the example
+There are two examples, each in a directory:
 
-```shell
-cd simple/
-make all
-```
+- `simple/`
+- `multi_page/`
+
+Details for each of the examples can be found in the `README.md`
+files in each of the above directories.
