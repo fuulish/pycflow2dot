@@ -68,4 +68,5 @@ Optionally, [`cpp`](http://en.wikipedia.org/wiki/C_preprocessor) too.
 
 ## License
 
-PyCflow2dot is licensed under the GNU GPL v3.
+PyCflow2dot is licensed under the [GNU GPL v3](
+    https://www.gnu.org/licenses/gpl-3.0.en.html).
