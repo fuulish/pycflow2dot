@@ -1,5 +1,6 @@
 """Installation script."""
 from setuptools import setup
+from pkg_resources import parse_version
 
 
 name = 'pycflow2dot'
@@ -8,6 +9,15 @@ description = (
     'using Cflow, producing linked PDF.')
 long_description = open('README.md').read()
 url = 'https://github.com/johnyf/{name}'.format(name=name)
+VERSION_FILE = '{name}/_version.py'.format(name=name)
+MAJOR = 0
+MINOR = 2
+MICRO = 2
+VERSION = '{major}.{minor}.{micro}'.format(
+    major=MAJOR, minor=MINOR, micro=MICRO)
+VERSION_TEXT = (
+    '# This file was generated from setup.py\n'
+    "version = '{version}'\n")
 install_requires = [
     'networkx >= 2.0',
     'pydot >= 1.2.3']
@@ -30,10 +40,46 @@ keywords = [
     'latex', 'cflow']
 
 
+def git_version(version):
+    """Return version with local version identifier."""
+    import git
+    repo = git.Repo('.git')
+    repo.git.status()
+    # assert versions are increasing
+    latest_tag = repo.git.describe(
+        match='v[0-9]*', tags=True, abbrev=0)
+    assert parse_version(latest_tag) <= parse_version(version), (
+        latest_tag, version)
+    sha = repo.head.commit.hexsha
+    if repo.is_dirty():
+        return '{v}.dev0+{sha}.dirty'.format(
+            v=version, sha=sha)
+    # commit is clean
+    # is it release of `version` ?
+    try:
+        tag = repo.git.describe(
+            match='v[0-9]*', exact_match=True,
+            tags=True, dirty=True)
+    except git.GitCommandError:
+        return '{v}.dev0+{sha}'.format(
+            v=version, sha=sha)
+    assert tag == 'v' + version, (tag, version)
+    return version
+
+
 def run_setup():
+    # version
+    try:
+        version = git_version(VERSION)
+    except:
+        print('No git info: Assume release.')
+        version = VERSION
+    s = VERSION_TEXT.format(version=version)
+    with open(VERSION_FILE, 'w') as f:
+        f.write(s)
     setup(
-        name='pycflow2dot',
-        version='0.2.2',
+        name=name,
+        version=version,
         license='GPLv3',
         description=description,
         long_description=long_description,
