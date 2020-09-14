@@ -69,9 +69,9 @@ def call_cflow(
     if numbered_nesting:
         cflow_cmd += ['-l']
     # None when -p passed w/o value
-    if preprocess == None:
+    if preprocess is None:
         cflow_cmd += ['--cpp']
-    elif preprocess != False:
+    elif preprocess:
         cflow_cmd += ['--cpp=' + preprocess]
     if do_reverse:
         cflow_cmd += ['--reverse']
@@ -138,7 +138,7 @@ def cflow2nx(cflow_str, c_fname):
     for line in lines:
         # logger.debug(line)
         # empty line ?
-        if line == '':
+        if not line:
             continue
         # defined in this file ?
         # apparently, this check is not needed: check this better
