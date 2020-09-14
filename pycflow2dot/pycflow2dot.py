@@ -60,8 +60,11 @@ def get_name(line):
     return name
 
 
-def call_cflow(c_fname, cflow, numbered_nesting=True, preprocess=False,
-               do_reverse=False):
+def call_cflow(
+        c_fname, cflow,
+        numbered_nesting=True,
+        preprocess=False,
+        do_reverse=False):
     cflow_cmd = [cflow]
     if numbered_nesting:
         cflow_cmd += ['-l']
