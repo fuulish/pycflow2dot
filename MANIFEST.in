@@ -7,6 +7,7 @@ include tests/Makefile
 include tests/basic_test.c
 include tests/*_test.py
 include examples/README.md
+include examples/simple/README.md
 include examples/simple/Makefile
 include examples/simple/hello_simple.c
 include examples/simple/ignore.txt
