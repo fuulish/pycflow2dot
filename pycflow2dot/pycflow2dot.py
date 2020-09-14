@@ -157,7 +157,7 @@ def cflow2nx(cflow_str, c_fname):
         # where are we ?
         (nest_level, func_name) = re.split(r'\t', s)
         nest_level = int(nest_level)
-        cur_node = is_reserved_by_dot(func_name)
+        cur_node = rename_if_reserved_by_dot(func_name)
         logger.debug('Found function:\n\t' + func_name
                + ',\n at depth:\n\t' + str(nest_level)
                + ',\n at src line:\n\t' + str(src_line_no))
@@ -183,7 +183,7 @@ def cflow2nx(cflow_str, c_fname):
     return g
 
 
-def is_reserved_by_dot(word):
+def rename_if_reserved_by_dot(word):
     # dot is case-insensitive, according to:
     #   http://www.graphviz.org/doc/info/lang.html
     if word.lower() in _DOT_RESERVED:
