@@ -480,6 +480,10 @@ def parse_args():
         '-x', '--exclude', default='',
         help='file listing functions to ignore'
     )
+    parser.add_argument(
+        '-v', '--verbosity', default='ERROR',
+        choices=['ERROR', 'WARNING', 'INFO', 'DEBUG'],
+        help='logging level')
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
@@ -523,6 +527,9 @@ def main():
     do_rev = args.reverse
     layout = args.layout
     exclude_list_fname = args.exclude
+    # configure the logger
+    logger.addHandler(logging.StreamHandler())
+    logger.setLevel(args.verbosity)
 
     logger.info(
             'C src files:\n\t' + str(c_fnames) + ", (extension '.c' omitted)\n"
