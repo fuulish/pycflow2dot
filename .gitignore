@@ -1,4 +1,6 @@
 *.py[cod]
+__pycache__/
+/pycflow2dot/_version.py
 
 # binaries
 *.DS_Store
@@ -14,9 +16,9 @@
 
 # Packages
 *.egg
-*.egg-info
-dist
-build
+/*.egg-info/
+/dist/
+/build/
 eggs
 parts
 bin
@@ -26,6 +28,7 @@ develop-eggs
 .installed.cfg
 lib
 lib64
+*.tar.gz
 
 # Installer logs
 pip-log.txt
