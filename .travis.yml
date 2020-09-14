@@ -1,0 +1,28 @@
+git:
+  depth: 3
+
+language: python
+
+python:
+  - "2.7"
+  - "3.5"
+  - "3.6"
+  - "3.7"
+  - "3.8"
+
+addons:
+  apt:
+    packages:
+      - cflow
+      - graphviz
+
+install:
+  - pip install --upgrade pip setuptools
+  - if test 2 = `python -c 'import sys; print(sys.version_info.major)'`; then pip install networkx==2.2 pyparsing==2.4.7; fi
+  - if test True = `python -c 'import sys; print(sys.version_info.major == 3 and sys.version_info.minor == 5)'`; then pip install networkx==2.4; fi
+  # pycflow2dot
+  - pip install .
+
+script:
+  - cd tests/
+  - make all
