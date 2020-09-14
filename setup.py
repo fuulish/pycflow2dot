@@ -1,14 +1,8 @@
 """Installation script."""
-import os
 from setuptools import setup
 
-if os.path.exists('README.txt'):
-    long_description = open('README.txt').read()
-elif os.path.exists('README.md'):
-    long_description = open('README.md').read()
-else:
-    print('Could not find readme from which to extract long_description.')
-    long_description = ''
+
+long_description = open('README.md').read()
 
 
 def run_setup():
@@ -21,6 +15,7 @@ def run_setup():
             'Create C call graphs from multiple source files '
             'using Cflow, producing linked PDF.'),
         long_description=long_description,
+        long_description_content_type='text/markdown',
         author='Ioannis Filippidis',
         author_email='jfilippidis@gmail.com',
         url='https://github.com/johnyf/pycflow2dot',
