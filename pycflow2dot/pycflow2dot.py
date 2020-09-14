@@ -207,7 +207,7 @@ def dot_preamble(c_fname, for_latex):
         'node [{node_defaults}];\n'
         'rankdir=LR;\n'
         'label="{c_fname}"\n'
-        'main [shape=box];\n').format(
+        ).format(
             node_defaults=node_defaults,
             c_fname=c_fname)
     return dot_str
