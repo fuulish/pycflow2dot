@@ -377,7 +377,7 @@ def write_graph2dot(graph, other_graphs, c_fname, img_fname,
 
 
 def write_graphs2dot(graphs, c_fnames, img_fname, for_latex, multi_page, layout):
-    dot_paths = []
+    dot_paths = list()
     counter = 0
     for graph, c_fname in zip(graphs, c_fnames):
         other_graphs = list(graphs)
@@ -394,7 +394,7 @@ def write_graphs2dot(graphs, c_fnames, img_fname, for_latex, multi_page, layout)
 def check_cflow_dot_availability():
     required = ['cflow', 'dot']
 
-    dep_paths = []
+    dep_paths = list()
     for dependency in required:
         path = subprocess.check_output(['which', dependency])
         path = bytes2str(path)
@@ -550,13 +550,13 @@ def main():
             img_format=img_format,
             for_latex=for_latex,
             multi_page=multi_page))
-    cflow_strs = []
+    cflow_strs = list()
     for c_fname in c_fnames:
         cur_str = call_cflow(c_fname, cflow, numbered_nesting=True,
                              preprocess=preproc, do_reverse=do_rev)
         cflow_strs += [cur_str]
 
-    graphs = []
+    graphs = list()
     for cflow_out, c_fname in zip(cflow_strs, c_fnames):
         cur_graph = cflow2nx(cflow_out, c_fname)
         graphs += [cur_graph]
