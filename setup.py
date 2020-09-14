@@ -21,6 +21,7 @@ VERSION_TEXT = (
 install_requires = [
     'networkx >= 2.0',
     'pydot >= 1.2.3']
+tests_require = ['nose >= 1.3.4']
 classifiers = [
     'Development Status :: 2 - Pre-Alpha',
     'Intended Audience :: Developers',
@@ -88,6 +89,7 @@ def run_setup():
         author_email='jfilippidis@gmail.com',
         url=url,
         install_requires=install_requires,
+        tests_require=tests_require,
         packages=[name],
         package_dir={name: name},
         entry_points={
