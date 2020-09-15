@@ -189,6 +189,8 @@ def choose_node_format(node, nest_level, src_line, defined_somewhere,
     else:
         color = _COLORS[(nest_level - 1) % 5]
         shape = shapes[nest_level % 5]
+    if src_line == -1:
+        color = None
     # fix underscores ?
     label = _escape_underscores(node, for_latex)
     logger.debug('Label:\n\t: ' + label)
