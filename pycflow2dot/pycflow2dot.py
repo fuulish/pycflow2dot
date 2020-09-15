@@ -30,6 +30,8 @@ try:
 except:
     pydot = None
 
+from pycflow2dot import __version__ as _VERSION
+
 
 _COLORS = ['#eecc80', '#ccee80', '#80ccee', '#eecc80', '#80eecc']
 _DOT_RESERVED = {'graph', 'strict', 'digraph', 'subgraph', 'node', 'edge'}
@@ -552,6 +554,10 @@ def parse_args():
         '-v', '--verbosity', default='ERROR',
         choices=['ERROR', 'WARNING', 'INFO', 'DEBUG'],
         help='logging level')
+    parser.add_argument(
+        '--version', action='version',
+        version='cflow2dot version {version}'.format(
+            version=_VERSION))
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
