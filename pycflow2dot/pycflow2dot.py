@@ -290,7 +290,7 @@ def dump_dot_wo_pydot(
     return dot_str
 
 
-def write_dot_file(dot_str, dot_fname):
+def _dump_dot_file(dot_str, dot_fname):
     """Dump `dot_str` to `dot` file `dot_fname`."""
     dot_path = dot_fname + '.dot'
     with open(dot_path, 'w') as f:
@@ -338,12 +338,12 @@ def _annotate_graph(
 def write_graph2dot(graph, other_graphs, c_fname, img_fname,
                     for_latex, multi_page, layout, rankdir):
     if pydot is None:
-        print('Pydot not found. Exporting using pycflow2dot.write_dot_file().')
+        print('Pydot not found. Exporting using native exporter.')
         dot_str = dump_dot_wo_pydot(
             graph, other_graphs, c_fname,
             for_latex=for_latex, multi_page=multi_page,
             rankdir=rankdir)
-        dot_path = write_dot_file(dot_str, img_fname)
+        dot_path = _dump_dot_file(dot_str, img_fname)
     else:
         # dump using networkx and pydot
         g = _annotate_graph(
