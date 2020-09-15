@@ -243,10 +243,7 @@ def choose_node_format(node, nest_level, src_line, defined_somewhere,
         color = _COLORS[(nest_level - 1) % 5]
         shape = shapes[nest_level % 5]
     # fix underscores ?
-    if for_latex:
-        label = re.sub(r'_', r'\\\\_', node)
-    else:
-        label = node
+    label = _escape_underscores(node, for_latex)
     logger.debug('Label:\n\t: ' + label)
     # src line of def here ?
     if src_line != -1:
@@ -267,6 +264,13 @@ def choose_node_format(node, nest_level, src_line, defined_somewhere,
                 label = sl + 'descref[' + label + ']{' + node + '}'
     logger.debug('Node dot label:\n\t: ' + label)
     return (label, color, shape)
+
+
+def _escape_underscores(s, for_latex):
+    """If `for_latex`, then escape `_` in `s`."""
+    if for_latex:
+        s = re.sub(r'_', r'\\\\_', s)
+    return s
 
 
 def dot_format_node(node, nest_level, src_line, defined_somewhere,
