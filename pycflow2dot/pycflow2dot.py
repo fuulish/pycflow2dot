@@ -574,10 +574,6 @@ def rm_excluded_funcs(list_fname, graphs):
 
 def main():
     """Run cflow, parse output, produce dot and compile it into pdf | svg."""
-    copyright_msg = 'cflow2dot'
-    print(copyright_msg)
-    # input
-    cflow, dot = check_cflow_dot_availability()
     # parse arguments
     args = parse_args()
     c_fnames = args.input_filenames
@@ -603,6 +599,10 @@ def main():
             img_format=img_format,
             for_latex=for_latex,
             multi_page=multi_page))
+    print('cflow2dot')
+    # input
+    cflow, dot = check_cflow_dot_availability()
+    # call `cflow`
     cflow_strs = list()
     for c_fname in c_fnames:
         cur_str = call_cflow(
