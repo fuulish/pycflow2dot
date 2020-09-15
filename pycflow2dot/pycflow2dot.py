@@ -20,6 +20,7 @@
 import argparse
 import locale
 import logging
+import os
 import re
 import subprocess
 import sys
@@ -290,13 +291,11 @@ def dump_dot_wo_pydot(
 
 
 def write_dot_file(dot_str, dot_fname):
-    try:
-        dot_path = dot_fname + '.dot'
-        with open(dot_path, 'w') as fp:
-            fp.write(dot_str)
-            logger.info('Dumped dot file.')
-    except:
-        raise Exception('Failed to save dot.')
+    """Dump `dot_str` to `dot` file `dot_fname`."""
+    dot_path = dot_fname + '.dot'
+    with open(dot_path, 'w') as f:
+        f.write(dot_str)
+    logger.info('Dumped dot file.')
     return dot_path
 
 
