@@ -228,7 +228,7 @@ def dot_format_node(node, nest_level, src_line, defined_somewhere,
         for_latex, multi_page)
     dot_str = (
         '{node}[label="{label}" '
-        'color="{color}" shape={shape}];\n\n').format(
+        'fillcolor="{color}" shape={shape}];\n\n').format(
             node=node,
             label=label,
             color=color,
@@ -313,7 +313,7 @@ def _annotate_graph(
             defined_somewhere,
             for_latex, multi_page)
         g.add_node(
-            node, label=label, color=color, shape=shape)
+            node, label=label, fillcolor=color, shape=shape)
     # annotate edges
     for u, v in graph.edges():
         g.add_edge(u, v)
