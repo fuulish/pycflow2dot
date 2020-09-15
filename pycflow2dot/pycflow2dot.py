@@ -31,6 +31,7 @@ except:
     pydot = None
 
 
+_COLORS = ['#eecc80', '#ccee80', '#80ccee', '#eecc80', '#80eecc']
 _DOT_RESERVED = {'graph', 'strict', 'digraph', 'subgraph', 'node', 'edge'}
 logger = logging.getLogger(__name__)
 
@@ -232,15 +233,14 @@ def _graph_node_defaults():
 
 def choose_node_format(node, nest_level, src_line, defined_somewhere,
                        for_latex, multi_page):
-    colors = ['#eecc80', '#ccee80', '#80ccee', '#eecc80', '#80eecc']
     shapes = ['box', 'ellipse', 'octagon', 'hexagon', 'diamond']
     sl = '\\\\'  # after fprintf \\ and after dot \, a single slash !
     # color, shape ?
     if nest_level == 0:
-        color = colors[0]
+        color = _COLORS[0]
         shape = 'box'
     else:
-        color = colors[(nest_level - 1) % 5]
+        color = _COLORS[(nest_level - 1) % 5]
         shape = shapes[nest_level % 5]
     # fix underscores ?
     if for_latex:
