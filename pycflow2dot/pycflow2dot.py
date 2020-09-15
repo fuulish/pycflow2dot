@@ -240,8 +240,8 @@ def _graph_name_for_latex(c_fname, for_latex):
 def _graph_node_defaults():
     """Return default properties of nodes."""
     return dict(
-        peripheries="2", style='"filled,rounded"',
-        fontname='"Vera Sans Mono"', color='"#eecc80"')
+        peripheries='1', style='"filled,rounded"',
+        fontname='"Vera Sans Mono"', fillcolor='"#ffffff"')
 
 
 def choose_node_format(node, nest_level, src_line, defined_somewhere,
