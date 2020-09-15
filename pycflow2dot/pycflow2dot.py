@@ -383,18 +383,18 @@ def write_graph2dot(graph, other_graphs, c_fname, img_fname,
         # dump using networkx and pydot
         g = _annotate_graph(
             graph, other_graphs, c_fname, for_latex, multi_page)
-        pydot_graph = nx.drawing.nx_pydot.to_pydot(g)
-        pydot_graph.set_splines('true')
-        if layout == 'twopi':
-            pydot_graph.set_ranksep(5)
-            pydot_graph.set_root('main')
-        else:
-            pydot_graph.set_overlap(False)
-            pydot_graph.set_rankdir('LR')
-
-        dot_path = img_fname + '.dot'
-        pydot_graph.write(dot_path, format='dot')
+        dot_path = _dump_graph_to_dot(g, img_fname, layout)
     return dot_path
+
+
+def _set_pydot_layout(pydot_graph, layout):
+    pydot_graph.set_splines('true')
+    if layout == 'twopi':
+        pydot_graph.set_ranksep(5)
+        pydot_graph.set_root('main')
+    else:
+        pydot_graph.set_overlap(False)
+        pydot_graph.set_rankdir('LR')
 
 
 def write_graphs2dot(graphs, c_fnames, img_fname, for_latex, multi_page, layout):
@@ -408,6 +408,15 @@ def write_graphs2dot(graphs, c_fnames, img_fname, for_latex, multi_page, layout)
             for_latex, multi_page, layout)
         dot_paths.append(dot_path)
     return dot_paths
+
+
+def _dump_graph_to_dot(graph, img_fname, layout):
+    """Dump `graph` to `dot` file with base `img_fname`."""
+    pydot_graph = nx.drawing.nx_pydot.to_pydot(graph)
+    _set_pydot_layout(pydot_graph, layout)
+    dot_path = img_fname + '.dot'
+    pydot_graph.write(dot_path, format='dot')
+    return dot_path
 
 
 def check_cflow_dot_availability():
