@@ -134,6 +134,19 @@ def cflow2dot_old(data, offset=False, filename=''):
 
 
 def cflow2nx(cflow_str, c_fname):
+    """Return graph from output of `cflow`.
+
+    @param cflow_str: output of `cflow`
+    @type cflow_str: `str`
+    @param c_fname: name of C file
+    @type c_fname: `str`
+    @return: graph of nodes named after functions,
+        with attributes:
+        - `nest_level`: distance of call from root
+        - `src_line`: source line number or
+            `-1` if function is defined in another file
+    @rtype: `networkx.DiGraph`
+    """
     lines = cflow_str.replace('\r', '').split('\n')
     g = nx.DiGraph()
     stack = dict()
