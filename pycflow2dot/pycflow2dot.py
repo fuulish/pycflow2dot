@@ -41,27 +41,6 @@ def bytes2str(b):
     return b.decode(encoding)
 
 
-def get_max_space(lines):
-    space = 0
-    for i in range(0, len(lines)):
-        if lines[i].startswith(space * 4 * ' '):
-            i = 0
-            space += 1
-    return space
-
-
-def get_name(line):
-    name = ''
-    for i in range(0, len(line)):
-        if line[i] == ' ':
-            pass
-        elif line[i] == '(':
-            break
-        else:
-            name += line[i]
-    return name
-
-
 def call_cflow(
         c_fname, cflow,
         numbered_nesting=True,
@@ -83,54 +62,6 @@ def call_cflow(
     cflow_data = bytes2str(cflow_data)
     logger.debug('cflow returned:\n\n' + cflow_data)
     return cflow_data
-
-
-def cflow2dot_old(data, offset=False, filename=''):
-    color = ['#eecc80', '#ccee80', '#80ccee', '#eecc80', '#80eecc']
-    shape = ['box', 'ellipse', 'octagon', 'hexagon', 'diamond']
-    dot = (
-        'digraph G {{\n'
-        'node [peripheries=2 style="filled,rounded" '
-        'fontname="Vera Sans Mono" color="#eecc80"];\n'
-        'rankdir=LR;\n'
-        'label="{filename}"\n'
-        'main [shape=box];\n').format(
-            filename=filename)
-    lines = data.replace('\r', '').split('\n')
-    max_space = get_max_space(lines)
-    nodes = set()
-    edges = set()
-    for i in range(0, max_space):
-        for j in range(0, len(lines)):
-            if lines[j].startswith((i + 1) * 4 * ' ') \
-                    and not lines[j].startswith((i + 2) * 4 * ' '):
-                cur_node = get_name(lines[j])
-                # node already seen ?
-                if cur_node not in nodes:
-                    nodes.add(cur_node)
-                    print('New Node: ' + cur_node)
-                # predecessor \exists ?
-                try:
-                    pred_node
-                except NameError:
-                    raise Exception(
-                        'No predecessor node defined yet! Buggy...')
-                # edge already seen ?
-                cur_edge = (pred_node, cur_node)
-                if cur_edge not in edges:
-                    edges.add(cur_edge)
-                else:
-                    continue
-                dot += (('node [color="%s" shape=%s];edge [color="%s"];\n') % (
-                        color[i % 5], shape[i % 5], color[i % 5]))
-                dot += (pred_node + '->' + cur_node + '\n')
-            elif lines[j].startswith(i * 4 * ' '):
-                pred_node = get_name(lines[j])
-            else:
-                raise Exception('bug ?')
-    dot += '}\n'
-    logger.debug('dot dump str:\n\n' + dot)
-    return dot
 
 
 def cflow2nx(cflow_str, c_fname):
