@@ -511,8 +511,10 @@ def check_cflow_dot_availability():
 def dot2img(dot_paths, img_format, layout):
     print('This may take some time... ...')
     for dot_path in dot_paths:
-        img_fname = str(dot_path)
-        img_fname = img_fname.replace('.dot', '.' + img_format)
+        root, ext = os.path.splitext(dot_path)
+        assert ext == '.dot', ext
+        img_fname = '{root}.{ext}'.format(
+            root=root, ext=img_format)
         dot_cmd = [layout, '-T' + img_format, '-o', img_fname, dot_path]
         logger.debug(dot_cmd)
         subprocess.check_call(dot_cmd)
