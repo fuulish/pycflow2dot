@@ -423,6 +423,99 @@ def write_graphs2dot(graphs, c_fnames, img_fname, for_latex, multi_page, layout)
     return dot_paths
 
 
+def _merge_graphs(graphs, c_fnames):
+    """Compose graphs from multiple C files into a single graph."""
+    g = nx.compose_all(graphs)
+    for graph, c_fname in zip(graphs, c_fnames):
+        _annotate_nodes_with_filename(g, graph, c_fname)
+    return g
+
+
+def _annotate_nodes_with_filename(g, graph, c_fname):
+    """Copy file names to node attributes of `g`.
+
+    For each node `u` of `graph`, if the node `u` is
+    defined in file `c_fname`, then annotate the node `u`
+    in graph `g` with `c_fname`.
+
+    This function adds the attribute `file_name` to
+    all nodes in `g`.
+    """
+    for u, d in graph.nodes(data=True):
+        assert u in g, (u, g.nodes())
+        src_line_no = d['src_line']
+        if src_line_no == -1:
+            continue
+        dg = g.nodes[u]
+        # assert each function is defined in
+        # at most one file
+        assert 'file_name' not in dg, dg
+        dg['file_name'] = c_fname
+
+
+def _format_merged_graph(graph, for_latex):
+    """Return graph with `dot` labeling."""
+    g = nx.DiGraph()
+    g.graph['node'] = _graph_node_defaults()
+    c_fnames = _collect_file_names(graph)
+    colormap = _make_colormap(c_fnames)
+    shape = '"ellipse"'
+    for u, d in graph.nodes(data=True):
+        _format_merged_node(
+            u, d, g, for_latex, shape, colormap)
+    for u, v in graph.edges():
+        g.add_edge(u, v)
+    return g
+
+
+def _collect_file_names(graph):
+    """Return `set` of values of node attribute `file_name`."""
+    c_fnames = set()
+    for u, d in graph.nodes(data=True):
+        c_fname = d.get('file_name')
+        if c_fname is None:
+            continue
+        c_fnames.add(c_fname)
+    return c_fnames
+
+
+def _make_colormap(c_fnames):
+    """Return `dict` that maps `c_fnames` to colors."""
+    colormap = dict()
+    n = len(_COLORS)
+    for i, fname in enumerate(c_fnames):
+        colormap[fname] = _COLORS[i % n]
+    return colormap
+
+
+def _format_merged_node(u, d, g, for_latex, shape, colormap):
+    """Add node `u` to `g` forming label using `d`."""
+    src_line = d['src_line']
+    file_name = d.get('file_name')
+    node_name = _escape_underscores(u, for_latex)
+    if file_name is None:
+        assert src_line == -1, src_line
+        label = (
+            '{node_name}\\n').format(
+                node_name=node_name)
+        attr = dict(label=label, shape=shape)
+    else:
+        label = (
+            '{node_name}\\n'
+            '{file_name}\\n'
+            '{src_line}\\n').format(
+                node_name=node_name,
+                file_name=file_name,
+                src_line=src_line)
+        fillcolor = colormap[file_name]
+        attr = dict(
+            label=label,
+            shape=shape,
+            fillcolor=fillcolor,
+            peripheries='0')
+    g.add_node(u, **attr)
+
+
 def _dump_graph_to_dot(graph, img_fname, layout):
     """Dump `graph` to `dot` file with base `img_fname`."""
     pydot_graph = nx.drawing.nx_pydot.to_pydot(graph)
@@ -515,6 +608,8 @@ def parse_args():
     parser.add_argument('-r', '--reverse', default=False, action='store_true',
                         help='pass --reverse option to cflow, '
                         + 'chart callee-caller dependencies')
+    parser.add_argument('--merge', default=False, action='store_true',
+                        help='create a single graph for multiple C files.')
     parser.add_argument(
         '-g', '--layout', default='dot',
         choices=['dot', 'neato', 'twopi', 'circo', 'fdp', 'sfdp'],
@@ -561,6 +656,7 @@ def main():
     img_fname = args.output_filename
     preproc = args.preprocess
     do_rev = args.reverse
+    merge = args.merge
     layout = args.layout
     exclude_list_fname = args.exclude
     # configure the logger
@@ -588,9 +684,15 @@ def main():
         cur_graph = cflow2nx(cflow_out, c_fname)
         graphs.append(cur_graph)
     rm_excluded_funcs(exclude_list_fname, graphs)
-    dot_paths = write_graphs2dot(
-        graphs, c_fnames, img_fname, for_latex,
-        multi_page, layout)
+    if merge:
+        g = _merge_graphs(graphs, c_fnames)
+        g = _format_merged_graph(g, for_latex)
+        dot_path = _dump_graph_to_dot(g, img_fname, layout)
+        dot_paths = [dot_path]
+    else:
+        dot_paths = write_graphs2dot(
+            graphs, c_fnames, img_fname, for_latex,
+            multi_page, layout)
     dot2img(dot_paths, img_format, layout)
 
 
