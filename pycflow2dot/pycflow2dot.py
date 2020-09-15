@@ -226,13 +226,20 @@ def dot_format_node(node, nest_level, src_line, defined_somewhere,
         node, nest_level, src_line,
         defined_somewhere,
         for_latex, multi_page)
-    dot_str = (
-        '{node}[label="{label}" '
-        'fillcolor="{color}" shape={shape}];\n\n').format(
-            node=node,
-            label=label,
-            color=color,
-            shape=shape)
+    if color is None or color == '#ffffff':
+        dot_str = (
+            '{node}[label="{label}" shape={shape}];\n\n').format(
+                node=node,
+                label=label,
+                shape=shape)
+    else:
+        dot_str = (
+            '{node}[label="{label}" '
+            'fillcolor="{color}" shape={shape}];\n\n').format(
+                node=node,
+                label=label,
+                color=color,
+                shape=shape)
     return dot_str
 
 
@@ -312,8 +319,15 @@ def _annotate_graph(
             node, nest_level, src_line,
             defined_somewhere,
             for_latex, multi_page)
-        g.add_node(
-            node, label=label, fillcolor=color, shape=shape)
+        if color is None or color == '#ffffff':
+            attr = dict(label=label, shape=shape)
+        else:
+            attr = dict(
+                label=label,
+                shape=shape,
+                fillcolor=color,
+                peripheries='0')
+        g.add_node(node, **attr)
     # annotate edges
     for u, v in graph.edges():
         g.add_edge(u, v)
