@@ -9,6 +9,9 @@ description = (
     'using Cflow, producing linked PDF.')
 long_description = open('README.md').read()
 url = 'https://github.com/johnyf/{name}'.format(name=name)
+PROJECT_URLS = {
+    'Bug Tracker': 'https://github.com/johnyf/pycflow2dot/issues',
+    'Examples': 'https://github.com/johnyf/pycflow2dot/tree/main/examples'}
 VERSION_FILE = '{name}/_version.py'.format(name=name)
 MAJOR = 0
 MINOR = 2
@@ -88,6 +91,7 @@ def run_setup():
         author='Ioannis Filippidis',
         author_email='jfilippidis@gmail.com',
         url=url,
+        project_urls=PROJECT_URLS,
         license='GPLv3',
         install_requires=install_requires,
         tests_require=tests_require,
