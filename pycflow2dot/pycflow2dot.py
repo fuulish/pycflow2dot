@@ -619,7 +619,8 @@ def rm_excluded_funcs(list_fname, graphs):
     if not list_fname:
         return
     # load list of ignored functions
-    rm_nodes = [line.strip() for line in open(list_fname).readlines()]
+    with open(list_fname) as f:
+        rm_nodes = [line.strip() for line in f.readlines()]
     # delete them
     for graph in graphs:
         for node in rm_nodes:

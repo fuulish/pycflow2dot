@@ -7,7 +7,8 @@ name = 'pycflow2dot'
 description = (
     'Create C call graphs from multiple source files '
     'using Cflow, producing linked PDF.')
-long_description = open('README.md').read()
+with open('README.md') as f:
+    long_description = f.read()
 url = 'https://github.com/johnyf/{name}'.format(name=name)
 PROJECT_URLS = {
     'Bug Tracker': 'https://github.com/johnyf/pycflow2dot/issues',
