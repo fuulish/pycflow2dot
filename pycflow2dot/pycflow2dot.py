@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Plot `cflow` output as graphs."""
 # Copyright 2013-2020 Ioannis Filippidis
-# Copyright 2010 unknown developer: https://code.google.com/p/cflow2dot/
+# Copyright 2010 unknown developer:  https://code.google.com/p/cflow2dot/
 # Copyright 2013 Dabaichi Valbendan
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 from __future__ import absolute_import
 import argparse
@@ -140,7 +140,7 @@ def cflow2nx(cflow_str, c_fname):
 
 def rename_if_reserved_by_dot(word):
     # dot is case-insensitive, according to:
-    #   http://www.graphviz.org/doc/info/lang.html
+    #   https://www.graphviz.org/doc/info/lang.html
     if word.lower() in _DOT_RESERVED:
         word = word + '_'
     return word

@@ -1,7 +1,7 @@
 This example requires:
 
 - [XeLaTeX](https://en.wikipedia.org/wiki/XeTeX): a LaTeX typesetting engine
-- [`svglatex.sty`](https://github.com/johnyf/latex_packages/blob/master/svglatex.sty):
+- [`svglatex.sty`](https://github.com/johnyf/latex_packages/blob/main/svglatex.sty):
   a LaTeX package for including SVG files via SVGLaTeX
 - [SVGLaTeX](https://github.com/johnyf/svglatex): a Python package for exporting
   SVG graphics to PDF for the graphics and LaTeX for the text.

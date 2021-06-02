@@ -9,16 +9,17 @@ function references.
 
 `cflow2dot -i hello_simple.c -f png` produces:
 
-![](https://raw.githubusercontent.com/johnyf/binaries/master/pycflow2dot/hello_simple.png)
+![](https://raw.githubusercontent.com/johnyf/binaries/main/pycflow2dot/hello_simple.png)
 
-from [`hello_simple.c`](https://github.com/johnyf/pycflow2dot/blob/master/examples/simple/hello_simple.c).
+from [`hello_simple.c`](
+    https://github.com/johnyf/pycflow2dot/blob/main/examples/simple/hello_simple.c).
 
 
 ## Description
 
 Draw the call graph of C source code using
-[cflow](http://en.wikipedia.org/wiki/GNU_cflow) and
-[dot](http://www.graphviz.org/).
+[cflow](https://en.wikipedia.org/wiki/GNU_cflow) and
+[dot](https://www.graphviz.org).
 Output to [LaTeX](https://en.wikipedia.org/wiki/LaTeX),
 [dot](https://en.wikipedia.org/wiki/DOT_(graph_description_language)),
 [PDF](https://en.wikipedia.org/wiki/PDF),
@@ -26,13 +27,13 @@ Output to [LaTeX](https://en.wikipedia.org/wiki/LaTeX),
 [PNG](https://en.wikipedia.org/wiki/Portable_Network_Graphics),
 and from dot to all formats supported
 from it. The LaTeX output is obtained by including the SVG via
-[Inkscape](http://inkscape.org/)'s LaTeX [export](
-    http://tug.ctan.org/info/svg-inkscape/InkscapePDFLaTeX.pdf)
+[Inkscape](https://inkscape.org)'s LaTeX [export](
+    https://ctan.org/tex-archive/info/svg-inkscape)
 functionality.
 
 Multi-file sources are converted to multiple SVG files, one for each source.
 These contain links using the LaTeX package
-[hyperref](http://ctan.org/pkg/hyperref), so that after compilation
+[hyperref](https://ctan.org/pkg/hyperref), so that after compilation
 one can click on the name of a function call and be taken to its definition,
 even if that definition is in another page of the PDF, because the function
 is defined in another source file than the one corresponding to the current
@@ -63,14 +64,14 @@ pip install pycflow2dot
 
 You also need to install the following non-Python dependencies:
 
-- [GNU cflow](http://en.wikipedia.org/wiki/GNU_cflow):
+- [GNU cflow](https://en.wikipedia.org/wiki/GNU_cflow):
   - `apt install cflow` on Debian GNU/Linux
-  - `port install cflow` with [MacPorts](http://www.macports.org/)
-- [`dot`](http://www.graphviz.org/):
+  - `port install cflow` with [MacPorts](https://www.macports.org)
+- [`dot`](https://www.graphviz.org):
   - `apt install graphviz`
   - `port install graphviz`
 
-Optionally, [`cpp`](http://en.wikipedia.org/wiki/C_preprocessor) too.
+Optionally, [`cpp`](https://en.wikipedia.org/wiki/C_preprocessor) too.
 
 
 ## License
