@@ -22,6 +22,7 @@ VERSION = '{major}.{minor}.{micro}'.format(
 VERSION_TEXT = (
     '# This file was generated from setup.py\n'
     "version = '{version}'\n")
+PYTHON_REQUIRES = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*'
 INSTALL_REQUIRES = [
     'networkx >= 2.0',
     'pydot >= 1.2.3']
@@ -94,6 +95,7 @@ def run_setup():
         url=url,
         project_urls=PROJECT_URLS,
         license='GPLv3',
+        python_requires=PYTHON_REQUIRES,
         install_requires=INSTALL_REQUIRES,
         tests_require=TESTS_REQUIRE,
         packages=[NAME],
