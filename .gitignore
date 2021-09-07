@@ -20,7 +20,6 @@ eggs
 
 .coverage
 .tox
-nosetests.xml
 
 *.pdf_tex
 *.aux
