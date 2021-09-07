@@ -107,13 +107,10 @@ def cflow2nx(cflow_str, c_fname):
         (nest_level, func_name) = re.split(r'\t', s)
         nest_level = int(nest_level)
         cur_node = rename_if_reserved_by_dot(func_name)
-        logger.debug((
-            'Found function:\n\t{func_name}'
-            ',\n at depth:\n\t{nest_level}'
-            ',\n at src line:\n\t{src_line_no}').format(
-                func_name=func_name,
-                nest_level=nest_level,
-                src_line_no=src_line_no))
+        logger.debug(
+            f'Found function:\n\t{func_name}'
+            f',\n at depth:\n\t{nest_level}'
+            f',\n at src line:\n\t{src_line_no}')
         stack[nest_level] = cur_node
         # not already seen ?
         if cur_node not in g:
@@ -133,8 +130,7 @@ def cflow2nx(cflow_str, c_fname):
             # add new edge
             g.add_edge(pred_node, cur_node)
             logger.info(
-                'Found edge:\n\t{pred_node}--->{cur_node}'.format(
-                    pred_node=pred_node, cur_node=cur_node))
+                f'Found edge:\n\t{pred_node}--->{cur_node}')
     return g
 
 
@@ -150,16 +146,12 @@ def dot_preamble(c_fname, for_latex, rankdir):
     c_fname = _graph_name_for_latex(c_fname, for_latex)
     d = _graph_node_defaults()
     node_defaults = ', '.join(
-        '{k}={v}'.format(k=k, v=v) for k, v in d.items())
+        f'{k}={v}' for k, v in d.items())
     dot_str = (
-        'digraph G {{\n'
-        'node [{node_defaults}];\n'
-        'rankdir={rankdir};\n'
-        'label="{c_fname}"\n'
-        ).format(
-            node_defaults=node_defaults,
-            rankdir=rankdir,
-            c_fname=c_fname)
+        'digraph G {\n'
+        f'node [{node_defaults}];\n'
+        f'rankdir={rankdir};\n'
+        f'label="{c_fname}"\n')
     return dot_str
 
 
@@ -199,11 +191,9 @@ def choose_node_format(node, nest_level, src_line, defined_somewhere,
     # src line of def here ?
     if src_line != -1:
         if for_latex:
-            label = '{label}\\n{src_line}'.format(
-                label=label, src_line=src_line)
+            label = f'{label}\\n{src_line}'
         else:
-            label = '{label}\\n{src_line}'.format(
-                label=label, src_line=src_line)
+            label = f'{label}\\n{src_line}'
     # multi-page pdf ?
     if multi_page:
         if src_line != -1:
@@ -231,29 +221,18 @@ def dot_format_node(node, nest_level, src_line, defined_somewhere,
         defined_somewhere,
         for_latex, multi_page)
     if color is None or color == '#ffffff':
-        dot_str = (
-            '{node}[label="{label}" shape={shape}];\n\n').format(
-                node=node,
-                label=label,
-                shape=shape)
+        dot_str = f'{node}[label="{label}" shape={shape}];\n\n'
     else:
         dot_str = (
-            '{node}[label="{label}" '
-            'fillcolor="{color}" shape={shape}];\n\n').format(
-                node=node,
-                label=label,
-                color=color,
-                shape=shape)
+            f'{node}[label="{label}" '
+            f'fillcolor="{color}" shape={shape}];\n\n')
     return dot_str
 
 
 def dot_format_edge(from_node, to_node, color):
     dot_str = (
-        'edge [color="{color}"];\n\n'
-        '{from_node}->{to_node}\n').format(
-            color=color,
-            from_node=from_node,
-            to_node=to_node)
+        f'edge [color="{color}"];\n\n'
+        f'{from_node}->{to_node}\n')
     return dot_str
 
 
@@ -463,18 +442,13 @@ def _format_merged_node(u, d, g, for_latex, shape, colormap):
     node_name = _escape_underscores(u, for_latex)
     if file_name is None:
         assert src_line == -1, src_line
-        label = (
-            '{node_name}\\n').format(
-                node_name=node_name)
+        label = f'{node_name}\\n'
         attr = dict(label=label, shape=shape)
     else:
         label = (
-            '{node_name}\\n'
-            '{file_name}\\n'
-            '{src_line}\\n').format(
-                node_name=node_name,
-                file_name=file_name,
-                src_line=src_line)
+            f'{node_name}\\n'
+            f'{file_name}\\n'
+            f'{src_line}\\n')
         fillcolor = colormap[file_name]
         attr = dict(
             label=label,
@@ -502,8 +476,7 @@ def check_cflow_dot_availability():
         if path.find(dependency) < 0:
             raise Exception(dependency + ' not found in $PATH.')
         path = path.replace('\n', '')
-        print('found {dependency} at: {path}'.format(
-            dependency=dependency, path=path))
+        print(f'found {dependency} at: {path}')
         dep_paths.append(path)
     return dep_paths
 
@@ -513,8 +486,7 @@ def dot2img(dot_paths, img_format, layout):
     for dot_path in dot_paths:
         root, ext = os.path.splitext(dot_path)
         assert ext == '.dot', ext
-        img_fname = '{root}.{ext}'.format(
-            root=root, ext=img_format)
+        img_fname = f'{root}.{img_format}'
         dot_cmd = [layout, '-T' + img_format, '-o', img_fname, dot_path]
         logger.debug(dot_cmd)
         subprocess.check_call(dot_cmd)
@@ -605,8 +577,7 @@ def parse_args():
         help='logging level')
     parser.add_argument(
         '--version', action='version',
-        version='cflow2dot version {version}'.format(
-            version=_VERSION))
+        version=f'cflow2dot version {_VERSION}')
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
@@ -648,16 +619,11 @@ def main():
     # configure the logger
     logger.addHandler(logging.StreamHandler())
     logger.setLevel(args.verbosity)
-    logger.info((
-        'C source files:\n\t{c_fnames},\n'
-        'img fname:\n\t{img_fname}.{img_format}\n'
-        'LaTeX export from Inkscape:\n\t{for_latex}\n'
-        'Multi-page PDF:\n\t{multi_page}').format(
-            c_fnames=c_fnames,
-            img_fname=img_fname,
-            img_format=img_format,
-            for_latex=for_latex,
-            multi_page=multi_page))
+    logger.info(
+        f'C source files:\n\t{c_fnames},\n'
+        f'img fname:\n\t{img_fname}.{img_format}\n'
+        f'LaTeX export from Inkscape:\n\t{for_latex}\n'
+        f'Multi-page PDF:\n\t{multi_page}')
     print('cflow2dot')
     # input
     cflow, dot = check_cflow_dot_availability()
