@@ -3,17 +3,17 @@ from setuptools import setup
 from pkg_resources import parse_version
 
 
-name = 'pycflow2dot'
-description = (
+NAME = 'pycflow2dot'
+DESCRIPTION = (
     'Create C call graphs from multiple source files '
     'using Cflow, producing linked PDF.')
 with open('README.md') as f:
     long_description = f.read()
-url = 'https://github.com/johnyf/{name}'.format(name=name)
+url = 'https://github.com/johnyf/{name}'.format(name=NAME)
 PROJECT_URLS = {
     'Bug Tracker': 'https://github.com/johnyf/pycflow2dot/issues',
     'Examples': 'https://github.com/johnyf/pycflow2dot/tree/main/examples'}
-VERSION_FILE = '{name}/_version.py'.format(name=name)
+VERSION_FILE = '{name}/_version.py'.format(name=NAME)
 MAJOR = 0
 MINOR = 2
 MICRO = 4
@@ -22,11 +22,11 @@ VERSION = '{major}.{minor}.{micro}'.format(
 VERSION_TEXT = (
     '# This file was generated from setup.py\n'
     "version = '{version}'\n")
-install_requires = [
+INSTALL_REQUIRES = [
     'networkx >= 2.0',
     'pydot >= 1.2.3']
-tests_require = ['nose >= 1.3.4']
-classifiers = [
+TESTS_REQUIRE = ['nose >= 1.3.4']
+CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
     'Intended Audience :: Developers',
     ('License :: OSI Approved :: '
@@ -41,7 +41,7 @@ classifiers = [
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Topic :: Software Development']
-keywords = [
+KEYWORDS = [
     'c', 'call graph', 'control flow', 'dot',
     'latex', 'cflow']
 
@@ -84,9 +84,9 @@ def run_setup():
     with open(VERSION_FILE, 'w') as f:
         f.write(s)
     setup(
-        name=name,
+        name=NAME,
         version=version,
-        description=description,
+        description=DESCRIPTION,
         long_description=long_description,
         long_description_content_type='text/markdown',
         author='Ioannis Filippidis',
@@ -94,14 +94,14 @@ def run_setup():
         url=url,
         project_urls=PROJECT_URLS,
         license='GPLv3',
-        install_requires=install_requires,
-        tests_require=tests_require,
-        packages=[name],
-        package_dir={name: name},
+        install_requires=INSTALL_REQUIRES,
+        tests_require=TESTS_REQUIRE,
+        packages=[NAME],
+        package_dir={NAME: NAME},
         entry_points={
             'console_scripts': ['cflow2dot = pycflow2dot.pycflow2dot:main']},
-        classifiers=classifiers,
-        keywords=keywords)
+        classifiers=CLASSIFIERS,
+        keywords=KEYWORDS)
 
 
 if __name__ == '__main__':
