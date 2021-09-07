@@ -22,7 +22,7 @@ VERSION = '{major}.{minor}.{micro}'.format(
 VERSION_TEXT = (
     '# This file was generated from setup.py\n'
     "version = '{version}'\n")
-PYTHON_REQUIRES = '>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*'
+PYTHON_REQUIRES = '>= 3.9'
 INSTALL_REQUIRES = [
     'networkx >= 2.0',
     'pydot >= 1.2.3']
@@ -34,12 +34,7 @@ CLASSIFIERS = [
      'GNU General Public License v3 or later (GPLv3+)'),
     'Operating System :: OS Independent',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 2.7',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.5',
-    'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
-    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3 :: Only',
     'Programming Language :: Python :: 3.9',
     'Topic :: Software Development']
 KEYWORDS = [
