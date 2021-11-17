@@ -674,10 +674,15 @@ def main():
     graphs = list()
     for cflow_out, c_fname in zip(cflow_strs, c_fnames):
         cur_graph = cflow2nx(cflow_out, c_fname)
+
         if isolate:
+            if not isolate in cur_graph:
+                continue
+
             desc = nx.descendants(cur_graph, isolate)
             desc.add(isolate)
             cur_graph = cur_graph.subgraph(desc)
+
         graphs.append(cur_graph)
     rm_excluded_funcs(exclude_list_fname, graphs)
     if merge:
