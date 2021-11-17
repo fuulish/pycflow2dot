@@ -580,6 +580,8 @@ def parse_args():
                         + 'chart callee-caller dependencies')
     parser.add_argument('--merge', default=False, action='store_true',
                         help='create a single graph for multiple C files.')
+    parser.add_argument('--isolate', default=None, action='store',
+                        help='subgraph descending from single function')
     parser.add_argument(
         '--source', action='store',
         help=('start node for call path highlighting. '
@@ -644,6 +646,7 @@ def main():
     layout = args.layout
     rankdir = args.rankdir
     exclude_list_fname = args.exclude
+    isolate = args.isolate
     # configure the logger
     logger.addHandler(logging.StreamHandler())
     logger.setLevel(args.verbosity)
@@ -671,6 +674,10 @@ def main():
     graphs = list()
     for cflow_out, c_fname in zip(cflow_strs, c_fnames):
         cur_graph = cflow2nx(cflow_out, c_fname)
+        if isolate:
+            desc = nx.descendants(cur_graph, isolate)
+            desc.add(isolate)
+            cur_graph = cur_graph.subgraph(desc)
         graphs.append(cur_graph)
     rm_excluded_funcs(exclude_list_fname, graphs)
     if merge:
