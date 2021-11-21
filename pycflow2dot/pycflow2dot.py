@@ -672,6 +672,7 @@ def main():
         cflow_strs.append(cur_str)
     # parse `cflow` output
     graphs = list()
+    c_fnames_fnl = list() # [] should be sufficient
     for cflow_out, c_fname in zip(cflow_strs, c_fnames):
         cur_graph = cflow2nx(cflow_out, c_fname)
 
@@ -684,16 +685,18 @@ def main():
             cur_graph = cur_graph.subgraph(desc)
 
         graphs.append(cur_graph)
+        c_fnames_fnl.append(c_fname)
+
     rm_excluded_funcs(exclude_list_fname, graphs)
     if merge:
-        g = _merge_graphs(graphs, c_fnames)
+        g = _merge_graphs(graphs, c_fnames_fnl)
         _mark_call_paths(g, source, target)
         g = _format_merged_graph(g, for_latex)
         dot_path = _dump_graph_to_dot(g, img_fname, layout, rankdir)
         dot_paths = [dot_path]
     else:
         dot_paths = write_graphs2dot(
-            graphs, c_fnames, img_fname, for_latex,
+            graphs, c_fnames_fnl, img_fname, for_latex,
             multi_page, layout, rankdir)
     dot2img(dot_paths, img_format, layout)
 
