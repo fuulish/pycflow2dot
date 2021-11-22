@@ -49,7 +49,8 @@ def call_cflow(
         c_fname, cflow,
         numbered_nesting=True,
         preprocess=False,
-        do_reverse=False):
+        do_reverse=False,
+        isolate=None):
     cflow_cmd = [cflow]
     if numbered_nesting:
         cflow_cmd.append('-l')
@@ -60,6 +61,8 @@ def call_cflow(
         cflow_cmd.append('--cpp=' + preprocess)
     if do_reverse:
         cflow_cmd.append('--reverse')
+    if not do_reverse and isolate:
+        cflow_cmd.append('--main=' + isolate)
     cflow_cmd.append(c_fname)
     logger.debug('cflow command:\n\t' + str(cflow_cmd))
     cflow_data = subprocess.check_output(cflow_cmd)
@@ -668,7 +671,7 @@ def main():
     for c_fname in c_fnames:
         cur_str = call_cflow(
             c_fname, cflow, numbered_nesting=True,
-            preprocess=preproc, do_reverse=do_rev)
+            preprocess=preproc, do_reverse=do_rev, isolate=isolate)
         cflow_strs.append(cur_str)
     # parse `cflow` output
     graphs = list()
